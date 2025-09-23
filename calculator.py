@@ -31,7 +31,15 @@ def sqrt(n1):
 def run_calculator():
     """The main function to runu the calculator loop."""
     print("Welcome to Calcify!")
-    print("Enter calculations like '5 + 3', or type 'quit' to exit.")
+    print("---" * 10)
+    print("Basic Ops:   5 + 3 | 10 * 2 | 8 ^ 2")
+    print("Advanced Ops:  sqrt 16")
+    print("Memory Ops:  MS (Store) | MR (Recall) | MC (Clear) | M+ (Add)")
+    print("Enter 'quit' to exit.")
+    print("---" * 10)
+
+    memory = 0.0
+    last_result = 0.0
 
     # A dictionary mapping symbols to our functions
     operations = {
@@ -48,41 +56,63 @@ def run_calculator():
     }
 
     while True:
-        user_input = input(">>> ")
+        user_input = input(">>> ").lower()
 
-        if user_input.lower() == 'quit':
+        if user_input == 'quit':
             print("Goodbye!")
             break
+
+        # --- MEMORY COMMANDS ---
+        if user_input == 'mc':
+            memory = 0.0
+            print("Memory cleared.")
+            continue 
+
+        if user_input == 'ms':
+            memory = last_result
+            print(f"Stored {last_result} to memory.")
+            continue
+
+        if user_input == 'm+':
+            memory += last_result
+            print(f"Added {last_result} to memory. New value: {memory}")
+            continue
+
+        # --- PARSING AND CALCULATION ---
+        # The MR (Memory Recall) logic is handle here
+        # It replaces 'mr' with the actual number from memory
+        if 'mr' in user_input:
+            user_input = user_input.replace('mr', str(memory))
+            print(f"Input: {user_input}")
 
         parts = user_input.split()
 
         try:
             # Check for unary operations first (e.g., "sqrt 16")
-            if len(parts) == 2 and parts[0].lower() in unary_operations:
-                op = parts[0].lower()
+            if len(parts) == 2 and parts[0] in unary_operations:
+                op = parts[0]
                 n1 = float(parts[1])
-                calculation_function = unary_operations[op]
-                result = calculation_function(n1)
-                print(result)
+                result = unary_operations[op](n1)
 
             # Check for binary operations (e.g., "5 + 3")
             elif len(parts) == 3:
                 n1 = float(parts[0])
                 op = parts[1]
                 n2 = float(parts[2])
-
-                if op in operations:
-                    calculation_function = operations[op]
-                    result = calculation_function(n1, n2)
-                    print(result)
-                else:
-                    print(f"'{op}' is not a valid operator.")
+                result = operations[op](n1, n2)
             else:
                 raise ValueError("Invalid format")
+            
+            # --- UPDATE AND DISPLAY RESULT ---
+            if isinstance(result, str): # Check if the result is an error message
+                print(result)
+            else:
+                print(result)
+                last_result = result # IMPORTANT: Update last_result on success
 
         except (ValueError, IndexError):
             # This is our "catch-all" for bad input
-            print("Invalid format. Please enter in the format: number operator number (e.g., 5 * 3)")
+            print("Invalid format or command. Please try again.")
 
 if __name__ == "__main__":
     run_calculator()
