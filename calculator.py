@@ -28,6 +28,17 @@ def sqrt(n1):
         return "Error: Cannot calculate square root of a negative number."
     return math.sqrt(n1)
 
+def parse_value(input_str, constants):
+    """
+    Parses a string into a number, checking for constants first.
+    Returns the numerical value.
+    """
+    input_str = input_str.lower()
+    if input_str in constants:
+        return constants[input_str]
+    else:
+        return float(input_str)
+
 def run_calculator():
     """The main function to runu the calculator loop."""
     print("Welcome to Calcify!")
@@ -40,6 +51,11 @@ def run_calculator():
 
     memory = 0.0
     last_result = 0.0
+
+    constants = {
+        'pi': math.pi,
+        'e': math.e,
+    }
 
     # A dictionary mapping symbols to our functions
     operations = {
@@ -91,14 +107,14 @@ def run_calculator():
             # Check for unary operations first (e.g., "sqrt 16")
             if len(parts) == 2 and parts[0] in unary_operations:
                 op = parts[0]
-                n1 = float(parts[1])
+                n1 = parse_value(parts[1], constants)
                 result = unary_operations[op](n1)
 
             # Check for binary operations (e.g., "5 + 3")
             elif len(parts) == 3:
-                n1 = float(parts[0])
+                n1 = parse_value(parts[0], constants)
                 op = parts[1]
-                n2 = float(parts[2])
+                n2 = parse_value(parts[2], constants)
                 result = operations[op](n1, n2)
             else:
                 raise ValueError("Invalid format")
