@@ -65,7 +65,7 @@ def run_calculator():
                 result = calculation_function(n1)
                 print(result)
 
-            # Check for binary operations (e.g., "5 + 3"")
+            # Check for binary operations (e.g., "5 + 3")
             elif len(parts) == 3:
                 n1 = float(parts[0])
                 op = parts[1]
